@@ -7,7 +7,7 @@ export default function NavBar() {
             <div className="logo-placeholder">PowerLab</div>
 
             <nav className="links">
-                <Link to="/home">Página Inicial</Link>
+                <Link to="/">Página Inicial</Link>
                 <Link to="/wiki">Wiki</Link>
             </nav>
 
