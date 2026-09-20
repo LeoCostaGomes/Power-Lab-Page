@@ -1,0 +1,77 @@
+/* ===========================================================
+   Cabeçalho
+=========================================================== */
+
+.NavBar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    min-height: 120px;
+
+    display: grid;
+    grid-template-columns: 1fr auto 1fr;
+    align-items: center;
+
+    padding: 1.1rem 1.5rem;
+
+    background: #7a7a7a;
+    border-bottom: 4px solid #3a3a3a;
+    box-shadow: 0 0 12px #0006;
+
+    z-index: 1000;
+}
+
+.NavBar .logo-placeholder {
+    grid-column: 1;
+    justify-self: start;
+
+    color: #fff;
+    font-family: "Press Start 2P", cursive;
+    font-size: 1.6rem;
+    letter-spacing: 1px;
+    text-shadow: 3px 3px 0 #000;
+}
+
+.NavBar .links {
+    grid-column: 2;
+    justify-self: center;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-wrap: wrap;
+
+    gap: 2rem;
+}
+
+.NavBar .links a {
+    display: block;
+
+    padding: 0.6rem 1rem;
+
+    color: #fff;
+    background: #b5b5b5;
+
+    border: 4px solid #3a3a3a;
+    border-radius: 8px;
+
+    font-family: "Press Start 2P", cursive;
+    font-size: 0.8rem;
+    text-shadow: 2px 2px 0 #000;
+
+    transition: transform 0.1s ease;
+}
+
+.NavBar .links a:hover {
+    transform: scale(1.08);
+}
+
+.NavBar .links a:active {
+    transform: scale(0.95);
+}
+
+.NavBar .links a.active {
+    color: #e9c46a;
+    text-shadow: 2px 2px 0 #000;
+}

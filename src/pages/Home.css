@@ -1,0 +1,173 @@
+/* ===========================================================
+   Home - Caixas de conteúdo
+=========================================================== */
+
+.ContentBox {
+    width: calc(100% - 2rem);
+    max-width: 1000px;
+
+    margin: 2rem auto;
+    padding: 2rem;
+
+    background: #7a7a7a;
+
+    border: 4px solid #3a3a3a;
+    border-radius: 10px;
+
+    box-shadow: 0 0 12px #0006;
+}
+
+.ContentBox h2 {
+    margin-bottom: 1.5rem;
+
+    text-align: center;
+    font-size: 1.8rem;
+}
+
+.ContentBox p {
+    margin-bottom: 1.2rem;
+    padding: 1rem;
+
+    background: #606060;
+
+    border-left: 4px solid #e9c46a;
+    border-radius: 6px;
+
+    font-family: "Press Start 2P", cursive;
+    font-size: 0.85rem;
+    line-height: 1.9;
+}
+
+.ContentBox p:last-of-type {
+    margin-bottom: 0;
+}
+
+/* ===========================================================
+   Trailer
+=========================================================== */
+
+.Trailer .video-wrapper {
+    position: relative;
+
+    width: 100%;
+    max-width: 850px;
+
+    margin: 0 auto;
+    padding-top: 47.8%;
+
+    overflow: hidden;
+
+    background: #000;
+
+    border: 4px solid #3a3a3a;
+    border-radius: 8px;
+}
+
+.Trailer .video-wrapper iframe {
+    position: absolute;
+
+    top: 0;
+    left: 0;
+
+    width: 100%;
+    height: 100%;
+
+    border: 0;
+}
+
+/* ===========================================================
+   Download
+=========================================================== */
+
+.download-wrapper {
+    display: flex;
+    justify-content: center;
+
+    margin-top: 1.5rem;
+}
+
+.download-btn {
+    padding: 1rem 2.2rem;
+
+    color: #fff;
+
+    background: linear-gradient(
+        90deg,
+        #ff0000,
+        #ff9900,
+        #ffee00,
+        #33cc33,
+        #0099ff,
+        #4b3ff2,
+        #a233ff
+    );
+
+    border: 4px solid #3a3a3a;
+    border-radius: 10px;
+
+    font-family: "Press Start 2P", cursive;
+    font-size: 0.9rem;
+    text-transform: uppercase;
+    text-shadow: 2px 2px 0 #000;
+
+    cursor: pointer;
+
+    transition: transform 0.1s ease;
+}
+
+.download-btn:hover {
+    transform: scale(1.05);
+}
+
+.download-btn:active {
+    transform: scale(0.95);
+}
+
+/* ===========================================================
+   Galeria
+=========================================================== */
+
+.Gallery .gallery-grid {
+    display: grid;
+
+    grid-template-columns: repeat(3, 1fr);
+    grid-template-rows: repeat(2, 1fr);
+
+    gap: 1.2rem;
+}
+
+.gallery-box {
+    aspect-ratio: 16 / 10;
+
+    background: #9a9a9a;
+
+    border: 4px solid #3a3a3a;
+    border-radius: 8px;
+}
+
+/* ===========================================================
+   Responsivo
+=========================================================== */
+
+@media (max-width: 900px) {
+    .Gallery .gallery-grid {
+        grid-template-columns: repeat(2, 1fr);
+        grid-template-rows: repeat(3, 1fr);
+    }
+}
+
+@media (max-width: 480px) {
+    .ContentBox {
+        width: calc(100% - 1rem);
+        padding: 1rem;
+    }
+
+    .ContentBox h2 {
+        font-size: 1.2rem;
+    }
+
+    .Gallery .gallery-grid {
+        grid-template-columns: 1fr;
+        grid-template-rows: repeat(6, 1fr);
+    }
+}
