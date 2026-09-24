@@ -77,3 +77,13 @@ export async function apiRequest<TResponse>(
 
     return data as TResponse;
 }
+
+// Normaliza uma resposta que deveria ser uma lista. Em PHP, um array
+// associativo com chaves não sequenciais vira um OBJETO no json_encode
+// (não um array) — isso faria .map()/.filter() quebrar no front. Essa
+// função aceita os dois formatos e sempre devolve um array de verdade.
+export function toArray<T>(value: unknown): T[] {
+    if (Array.isArray(value)) return value as T[];
+    if (value && typeof value === "object") return Object.values(value) as T[];
+    return [];
+}

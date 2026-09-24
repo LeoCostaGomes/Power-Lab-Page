@@ -7,6 +7,18 @@ import "./WikiItemCard.css";
 // (Raquetes alternando skin, Skins alternando raquete).
 const ROTATION_INTERVAL_MS = 5000;
 
+// Sorteia um índice diferente do atual, pra nunca repetir a mesma imagem
+// duas vezes seguidas.
+function pickNextIndex(length: number, currentIndex: number): number {
+    if (length < 2) return 0;
+
+    let nextIndex = Math.floor(Math.random() * length);
+    if (nextIndex === currentIndex) {
+        nextIndex = (nextIndex + 1) % length;
+    }
+    return nextIndex;
+}
+
 interface WikiItemCardProps {
     item: WikiItem;
     categoryId: string;
@@ -26,7 +38,9 @@ export default function WikiItemCard({ item, categoryId }: WikiItemCardProps) {
         if (images.length < 2) return;
 
         const intervalId = setInterval(() => {
-            setImageIndex((previous) => (previous + 1) % images.length);
+            setImageIndex((previous) =>
+                pickNextIndex(images.length, previous),
+            );
         }, ROTATION_INTERVAL_MS);
 
         return () => clearInterval(intervalId);
@@ -38,15 +52,16 @@ export default function WikiItemCard({ item, categoryId }: WikiItemCardProps) {
     // TODO: ajustar a rota quando a página de detalhes do item existir.
     return (
         <Link className="wiki-card" to={`/wiki/${categoryId}/${item.id}`}>
-            <span
-                className="wiki-card-image"
-                aria-hidden="true"
-                style={
-                    currentImage
-                        ? { backgroundImage: `url(${currentImage})` }
-                        : undefined
-                }
-            />
+            {currentImage ? (
+                <img
+                    className="wiki-card-image"
+                    src={currentImage}
+                    alt={item.name}
+                    loading="lazy"
+                />
+            ) : (
+                <span className="wiki-card-image" aria-hidden="true" />
+            )}
             <span className="wiki-card-name">{item.name}</span>
         </Link>
     );

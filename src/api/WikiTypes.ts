@@ -1,7 +1,6 @@
-// Formatos de resposta da API, conforme documentados no README do
-// back-end. Campos comentados como "não confirmado" são os que a própria
-// documentação avisa que ainda precisam ser conferidos contra a resposta
-// real (controllers feitos fora da conversa em que a doc foi escrita).
+// Formatos de resposta da API, conforme o README e o StageController
+// (compartilhado por Leonardo). Onde os nomes de campo internos não
+// vieram do código-fonte, isso está marcado explicitamente abaixo.
 
 export interface ApiPaddle {
     id: number;
@@ -18,11 +17,10 @@ export interface ApiUltimate {
     territory: string;
 }
 
-// Campos além de id/name não confirmados pela documentação.
 export interface ApiParticle {
     id: number;
     name: string;
-    sprite?: string;
+    sprite: string;
 }
 
 export interface ApiSkin {
@@ -55,7 +53,6 @@ export interface ApiModifier {
     sprite: string;
 }
 
-// Campos prováveis (colunas de tb_game_mode) — não confirmados.
 export interface ApiGameMode {
     id: number;
     name: string;
@@ -68,18 +65,63 @@ export interface ApiObjective {
     description: string;
 }
 
-// Campos prováveis (colunas de tb_game_version) — não confirmados.
 export interface ApiGameVersion {
     id: number;
     versionCode: string;
     versionLog: string;
 }
 
-// A doc descreve o conteúdo (raquete bot, ultimate bot, partícula bot,
-// território, dificuldade, tipo de inimigo, objetivo, recompensa,
-// modificadores) mas não os nomes exatos dos campos no JSON. Ajustar assim
-// que o StageController tiver a documentação completa.
+// ===========================================================
+// Fases (/stages) — baseado no retorno real do StageController.
+// Os nomes de nível superior (id, name, paddleBot, ultimateBot, skinBot,
+// particleBot, territory, difficulty, enemyType, objective, reward,
+// modifiers) vieram direto do código. Os campos DENTRO de paddleBot,
+// skinBot e objective são inferidos pelo padrão dos outros formatters
+// (formatUltimate, formatParticle, etc.) — o código enviado só mostra as
+// chamadas, não o corpo desses métodos. Ajustar se vierem diferentes.
+// ===========================================================
+
+export interface ApiStagePaddleBot {
+    id: number;
+    name: string;
+    // Descrição do estágio específico dessa fase — uma das 5 descrições
+    // da raquete (getPaddleStage()), já resolvida pelo back-end.
+    description: string;
+    territory: string;
+}
+
+export interface ApiStageSkinBot {
+    id: number;
+    name: string;
+    // Sprite dessa skin já aplicada ao paddleBot dessa fase.
+    sprite: string;
+}
+
+export interface ApiStageObjective {
+    id: number;
+    name: string;
+    description: string;
+    quantity: number;
+}
+
+export interface ApiStageReward {
+    text: string;
+    quantity: number;
+    sprite: string;
+}
+
 export interface ApiStage {
     id: number;
-    [key: string]: unknown;
+    name: string;
+    paddleBot: ApiStagePaddleBot;
+    ultimateBot: ApiUltimate;
+    skinBot: ApiStageSkinBot;
+    particleBot: ApiParticle;
+    territory: string;
+    difficulty: string;
+    enemyType: string;
+    objective: ApiStageObjective;
+    reward: ApiStageReward;
+    // Até 3 modificadores; slots vazios vêm como null.
+    modifiers: (ApiModifier | null)[];
 }

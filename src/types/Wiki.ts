@@ -2,7 +2,7 @@
 export interface WikiCategory {
     id: string;
     label: string;
-    // Id do ícone dentro de public/icons.svg (ex.: "raquete" -> "#raquete").
+    // Id do ícone dentro de public/icons.svg (ex.: "paddle" -> "#paddle").
     // Categorias sem ícone usam variant "list".
     icon?: string;
     // "grid": cards com imagem, um por categoria com ícone (Raquetes, Ultimate, etc.).
@@ -12,12 +12,15 @@ export interface WikiCategory {
 }
 
 // Um item dentro de uma categoria (ex.: a raquete "Clássica", o modo "Campanha").
-// Estrutura pensada para já vir pronta a receber os dados da API.
 export interface WikiItem {
     id: string;
     name: string;
-    // Usado nos cards de grade (categorias com ícone).
-    imageUrl?: string;
+    // Data URI completa (mimetype + base64) — a API já devolve pronta.
+    // Usado quando o item tem uma única imagem fixa.
+    image?: string;
+    // Lista de imagens para alternar automaticamente (ver WikiItemCard) —
+    // usado pelas Raquetes (skins aplicadas) e Skins (raquetes que a usam).
+    images?: string[];
     // Usado nos cards de lista (categorias sem ícone).
     description?: string;
 }

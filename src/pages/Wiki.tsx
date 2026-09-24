@@ -56,7 +56,9 @@ export default function Wiki() {
                 const message =
                     error instanceof ApiError
                         ? error.message
-                        : "Não foi possível carregar esses dados agora.";
+                        : error instanceof Error
+                          ? error.message
+                          : "Não foi possível carregar esses dados agora.";
 
                 setErrorByCategory((prev) => ({
                     ...prev,
@@ -125,7 +127,14 @@ export default function Wiki() {
                                 <div className="wiki-grid">
                                     {items.map((item) => (
                                         <WikiItemCard
-                                            key={item.id}
+                                            // O id sozinho não é único entre
+                                            // categorias (cada tabela tem sua
+                                            // própria sequência de ids) — sem
+                                            // o prefixo, o React podia
+                                            // reaproveitar um card de outra
+                                            // categoria e deixar o intervalo
+                                            // de rotação de sprite "vazando".
+                                            key={`${activeCategory.id}-${item.id}`}
                                             item={item}
                                             categoryId={activeCategory.id}
                                         />
@@ -135,7 +144,7 @@ export default function Wiki() {
                                 <div className="wiki-list">
                                     {items.map((item) => (
                                         <WikiInfoCard
-                                            key={item.id}
+                                            key={`${activeCategory.id}-${item.id}`}
                                             item={item}
                                         />
                                     ))}

@@ -1,9 +1,8 @@
 import type { WikiCategory } from "../types/Wiki";
 
 // Ids alinhados com os recursos da API (ver README: /paddles, /ultimates,
-// /particle, /skins, /boxes, /modifiers, /stages). Os três sem rota ainda
-// (gameModes, matchObjectives, gameVersions) usam nomes previstos para
-// quando as rotas correspondentes existirem.
+// /particles, /skins, /boxes, /modifiers, /gamemodes, /objectives,
+// /gameversions, /stages).
 //
 // TODO: os ids de ícone abaixo esperam entradas correspondentes em
 // public/icons.svg (ex.: <symbol id="paddle">...). Ajuste os ids se os
