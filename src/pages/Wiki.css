@@ -33,9 +33,14 @@
     min-width: 0;
 }
 
+/* ===========================================================
+   Mensagens de estado (carregando / erro / lista vazia)
+=========================================================== */
+
 /* Especificidade extra (classe + tag) para vencer a regra genérica
    ".ContentBox p" e não herdar o estilo padrão de parágrafo. */
-.WikiHome p.wiki-empty-message {
+.WikiHome p.wiki-status-message,
+.WikiHome div.wiki-status-message {
     margin: 0;
     padding: 1.2rem;
 
@@ -46,6 +51,45 @@
 
     font-size: 0.85rem;
     line-height: 1.6;
+}
+
+.WikiHome div.wiki-status-message.error {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 1rem;
+
+    border-color: #d9534f;
+}
+
+.WikiHome div.wiki-status-message.error p {
+    margin: 0;
+}
+
+.wiki-retry-btn {
+    padding: 0.6rem 1rem;
+
+    color: #fff;
+    background: #b5b5b5;
+
+    border: 4px solid #3a3a3a;
+    border-radius: 8px;
+
+    font-family: "Press Start 2P", cursive;
+    font-size: 0.65rem;
+    text-shadow: 1px 1px 0 #000;
+
+    cursor: pointer;
+
+    transition: transform 0.1s ease;
+}
+
+.wiki-retry-btn:hover {
+    transform: scale(1.05);
+}
+
+.wiki-retry-btn:active {
+    transform: scale(0.95);
 }
 
 /* ===========================================================
