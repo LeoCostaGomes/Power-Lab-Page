@@ -1,12 +1,25 @@
-import { Link } from "react-router";
+import { useState } from "react";
+import { Link, useNavigate } from "react-router";
+import { useAuth } from "../auth/AuthContext";
 import "./NavBar.css";
 
 export default function NavBar() {
+    const [isMenuOpen, setIsMenuOpen] = useState(false);
+    const { logout } = useAuth();
+    const navigate = useNavigate();
+
+    function handleLogout() {
+        setIsMenuOpen(false);
+        logout();
+        navigate("/login");
+    }
+
     return (
         <header className="NavBar">
             <div className="logo-placeholder">PowerLab</div>
 
             <nav className="links">
+                {/* Era "/home" — rota que nunca existiu; a Tela Inicial é "/". */}
                 <Link to="/">Página Inicial</Link>
                 <Link to="/wiki">Wiki</Link>
             </nav>
@@ -15,8 +28,9 @@ export default function NavBar() {
                 <button
                     type="button"
                     className="user-icon-btn"
-                    id="userMenuBtn"
                     aria-label="Menu do usuário"
+                    aria-expanded={isMenuOpen}
+                    onClick={() => setIsMenuOpen((open) => !open)}
                 >
                     <svg
                         viewBox="0 0 24 24"
@@ -26,7 +40,15 @@ export default function NavBar() {
                     </svg>
                 </button>
 
-                <div className="UserDropdown" id="userDropdown"></div>
+                <div className={"UserDropdown" + (isMenuOpen ? " open" : "")}>
+                    <button
+                        type="button"
+                        className="dropdown-item"
+                        onClick={handleLogout}
+                    >
+                        Sair
+                    </button>
+                </div>
             </div>
         </header>
     );

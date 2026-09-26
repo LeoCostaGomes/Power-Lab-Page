@@ -1,0 +1,137 @@
+.AuthPage {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    min-height: 100vh;
+    width: 100%;
+
+    padding: 2rem 1rem;
+    position: relative;
+}
+
+.Form {
+    display: flex;
+    justify-content: center;
+    width: 100%;
+}
+
+.Form form {
+    width: 90%;
+    max-width: 500px;
+    padding: 2rem;
+
+    background: #7a7a7a;
+
+    border: 4px solid #3a3a3a;
+    border-radius: 10px;
+
+    box-shadow: 0 0 12px #0006;
+}
+
+.Form h2 {
+    margin-bottom: 2rem;
+
+    text-align: center;
+    font-size: 1.4rem;
+    text-shadow: 3px 3px 0 #000;
+    text-transform: uppercase;
+}
+
+.Form label {
+    display: block;
+    margin-bottom: 0.5rem;
+
+    font-size: 0.8rem;
+    text-shadow: 2px 2px 0 #000;
+}
+
+.Form input {
+    width: 100%;
+    margin-bottom: 1.5rem;
+    padding: 0.8rem;
+
+    color: #fff;
+    background: #606060;
+
+    border: 4px solid #3a3a3a;
+    border-radius: 6px;
+
+    font-family: "Press Start 2P", cursive;
+}
+
+.Form input:focus {
+    outline: none;
+    border-color: #e9c46a;
+}
+
+.Form button {
+    width: 100%;
+    margin-bottom: 1rem;
+    padding: 1rem;
+
+    color: #fff;
+
+    border: 4px solid #3a3a3a;
+    border-radius: 8px;
+
+    font-family: "Press Start 2P", cursive;
+    font-size: 0.85rem;
+    text-shadow: 2px 2px 0 #000;
+    text-transform: uppercase;
+
+    cursor: pointer;
+
+    transition: transform 0.1s ease;
+}
+
+.Form button:last-child {
+    margin-bottom: 0;
+}
+
+.Form button:hover {
+    transform: scale(1.03);
+}
+
+.Form button:active {
+    transform: scale(0.95);
+}
+
+.Form button:disabled {
+    cursor: not-allowed;
+    opacity: 0.6;
+    transform: none;
+}
+
+.Form button.primary-btn {
+    background: #b5b5b5;
+}
+
+.Form button.secondary-btn {
+    background: #606060;
+}
+
+/* ===========================================================
+   Mensagens de erro / aviso do formulário
+=========================================================== */
+
+.Form .form-error,
+.Form .form-info {
+    margin-bottom: 1.5rem;
+    padding: 0.9rem 1rem;
+
+    background: #606060;
+    border-radius: 6px;
+
+    color: #fff;
+    font-size: 0.75rem;
+    line-height: 1.6;
+}
+
+.Form .form-error {
+    border-left: 4px solid #d9534f;
+}
+
+.Form .form-info {
+    border-left: 4px solid #e9c46a;
+}
