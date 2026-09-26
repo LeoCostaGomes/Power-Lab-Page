@@ -6,18 +6,22 @@ import { ApiError } from "../api/Client";
 // gente só repassa error.message.
 export function getAuthErrorMessage(
     error: unknown,
-    kind: "login" | "register",
+    kind: "login" | "register" | "verify" | "update",
 ): string {
     if (error instanceof ApiError) {
         switch (error.status) {
             case 400:
                 return "Preencha todos os campos corretamente.";
             case 401:
-                return kind === "login"
-                    ? "E-mail ou senha incorretos."
-                    : error.message;
+                if (kind === "login") return "E-mail ou senha incorretos.";
+                if (kind === "verify") return "Senha atual incorreta.";
+                if (kind === "update")
+                    return "Sua sessão expirou. Faça login novamente.";
+                return error.message;
             case 409:
-                return "Esse e-mail já está cadastrado. Tente fazer login.";
+                return kind === "update"
+                    ? "Esse e-mail já está em uso por outra conta."
+                    : "Esse e-mail já está cadastrado. Tente fazer login.";
             case 429:
                 return (
                     error.message ||

@@ -44,6 +44,9 @@ interface AuthContextValue {
         password: string,
     ) => Promise<void>;
     logout: () => void;
+    // Atualiza os dados do usuário guardados na sessão (ex.: depois de um
+    // PUT /users/put/{id} bem-sucedido) sem precisar logar de novo.
+    updateUser: (patch: Partial<ApiUser>) => void;
 }
 
 const AuthContext = createContext<AuthContextValue | null>(null);
@@ -130,6 +133,19 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         persistSession(null);
     }, [persistSession]);
 
+    const updateUser = useCallback((patch: Partial<ApiUser>) => {
+        setSession((prev) => {
+            if (!prev) return prev;
+
+            const next: StoredSession = {
+                ...prev,
+                user: { ...prev.user, ...patch },
+            };
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(next));
+            return next;
+        });
+    }, []);
+
     const value = useMemo<AuthContextValue>(
         () => ({
             user: session?.user ?? null,
@@ -138,8 +154,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
             login,
             register,
             logout,
+            updateUser,
         }),
-        [session, login, register, logout],
+        [session, login, register, logout, updateUser],
     );
 
     return (

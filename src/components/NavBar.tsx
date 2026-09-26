@@ -41,6 +41,13 @@ export default function NavBar() {
                 </button>
 
                 <div className={"UserDropdown" + (isMenuOpen ? " open" : "")}>
+                    <Link
+                        to="/usuario"
+                        className="dropdown-item"
+                        onClick={() => setIsMenuOpen(false)}
+                    >
+                        Detalhes do Usuário
+                    </Link>
                     <button
                         type="button"
                         className="dropdown-item"

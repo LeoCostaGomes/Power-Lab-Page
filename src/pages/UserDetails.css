@@ -1,0 +1,164 @@
+.UserDetails {
+    max-width: 700px;
+}
+
+.UserDetails .detail-row {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 1.5rem;
+    margin-bottom: 1.8rem;
+}
+
+.UserDetails .detail-row:last-child {
+    margin-bottom: 0;
+}
+
+.UserDetails .detail-info {
+    flex: 1;
+    min-width: 0;
+}
+
+.UserDetails .detail-label {
+    display: block;
+    margin-bottom: 0.6rem;
+
+    font-size: 0.75rem;
+    text-shadow: 2px 2px 0 #000;
+}
+
+.UserDetails .detail-value {
+    padding: 0.9rem 1rem;
+
+    background: #606060;
+
+    border: 4px solid #3a3a3a;
+    border-radius: 6px;
+
+    font-size: 0.85rem;
+    word-break: break-word;
+}
+
+.UserDetails .detail-edit-form {
+    margin-top: 0.2rem;
+}
+
+.UserDetails .detail-edit-form label {
+    display: block;
+    margin-bottom: 0.5rem;
+
+    font-size: 0.65rem;
+    text-shadow: 2px 2px 0 #000;
+}
+
+.UserDetails .detail-input,
+.UserDetails .current-password-input {
+    width: 100%;
+    padding: 0.8rem;
+
+    color: #fff;
+    background: #606060;
+
+    border: 4px solid #3a3a3a;
+    border-radius: 6px;
+
+    font-family: "Press Start 2P", cursive;
+    font-size: 0.8rem;
+}
+
+.UserDetails .detail-input:focus,
+.UserDetails .current-password-input:focus {
+    outline: none;
+    border-color: #e9c46a;
+}
+
+.UserDetails .field-error {
+    margin-top: 0.6rem;
+
+    color: #f2b8b5;
+    font-size: 0.65rem;
+    line-height: 1.5;
+}
+
+.UserDetails .detail-actions {
+    display: flex;
+    flex-direction: column;
+    flex-shrink: 0;
+    gap: 0.6rem;
+}
+
+.UserDetails .edit-btn,
+.UserDetails .edit-confirm-actions button {
+    padding: 0.7rem 1rem;
+
+    color: #fff;
+
+    border: 4px solid #3a3a3a;
+    border-radius: 8px;
+
+    font-family: "Press Start 2P", cursive;
+    font-size: 0.65rem;
+    text-shadow: 1px 1px 0 #000;
+    white-space: nowrap;
+
+    cursor: pointer;
+
+    transition: transform 0.1s ease;
+}
+
+.UserDetails .edit-btn:hover,
+.UserDetails .edit-confirm-actions button:hover {
+    transform: scale(1.05);
+}
+
+.UserDetails .edit-btn:active,
+.UserDetails .edit-confirm-actions button:active {
+    transform: scale(0.95);
+}
+
+.UserDetails .edit-btn:disabled,
+.UserDetails .edit-confirm-actions button:disabled {
+    cursor: not-allowed;
+    opacity: 0.6;
+    transform: none;
+}
+
+.UserDetails .edit-btn {
+    background: #b5b5b5;
+}
+
+.UserDetails .edit-confirm-actions {
+    display: flex;
+    flex-direction: column;
+    gap: 0.6rem;
+}
+
+.UserDetails .save-btn,
+.UserDetails .confirm-password-btn {
+    background: #b5b5b5;
+}
+
+.UserDetails .cancel-btn {
+    background: #606060;
+}
+
+@media (max-width: 700px) {
+    .UserDetails .detail-row {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .UserDetails .detail-actions,
+    .UserDetails .edit-confirm-actions {
+        flex-direction: row;
+    }
+
+    .UserDetails .detail-actions {
+        margin-top: 1rem;
+    }
+
+    .UserDetails .edit-btn,
+    .UserDetails .edit-confirm-actions button {
+        flex: 1;
+    }
+}

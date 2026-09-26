@@ -6,6 +6,7 @@ import Home from "./pages/Home"
 import Wiki from "./pages/Wiki"
 import Login from "./pages/Login"
 import Cadastro from "./pages/Cadastro"
+import UserDetails from "./pages/UserDetails"
 
 function App() {
     return (
@@ -19,6 +20,7 @@ function App() {
                 <Route element={<RequireAuth />}>
                     <Route path="/" element={<Home />} />
                     <Route path="/wiki" element={<Wiki />} />
+                    <Route path="/usuario" element={<UserDetails />} />
                 </Route>
             </Routes>
         </AuthProvider>
