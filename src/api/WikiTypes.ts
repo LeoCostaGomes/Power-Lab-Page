@@ -68,7 +68,7 @@ export interface ApiObjective {
 export interface ApiGameVersion {
     id: number;
     versionCode: string;
-    versionLog: string;
+    changeLog: string;
 }
 
 // ===========================================================

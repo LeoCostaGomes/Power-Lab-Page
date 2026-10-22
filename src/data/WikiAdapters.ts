@@ -91,7 +91,7 @@ export function gameVersionToWikiItem(gameVersion: ApiGameVersion): WikiItem {
     return {
         id: String(gameVersion.id),
         name: gameVersion.versionCode,
-        description: gameVersion.versionLog,
+        description: gameVersion.changeLog,
     };
 }
 

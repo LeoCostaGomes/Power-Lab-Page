@@ -1,4 +1,5 @@
 import type { WikiItem } from "../types/Wiki";
+import Multiline from "./Multiline";
 import "./WikiInfoCard.css";
 
 interface WikiInfoCardProps {
@@ -14,7 +15,7 @@ export default function WikiInfoCard({ item }: WikiInfoCardProps) {
 
             {item.description && (
                 <p className="wiki-info-card-description">
-                    {item.description}
+                    <Multiline text={item.description} />
                 </p>
             )}
         </div>
