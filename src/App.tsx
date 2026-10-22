@@ -4,6 +4,7 @@ import RequireAuth from "./routes/RequireAuth"
 import GuestOnly from "./routes/GuestOnly"
 import Home from "./pages/Home"
 import Wiki from "./pages/Wiki"
+import WikiItemDetail from "./pages/WikiItemDetail"
 import Login from "./pages/Login"
 import Cadastro from "./pages/Cadastro"
 import UserDetails from "./pages/UserDetails"
@@ -20,6 +21,10 @@ function App() {
                 <Route element={<RequireAuth />}>
                     <Route path="/" element={<Home />} />
                     <Route path="/wiki" element={<Wiki />} />
+                    <Route
+                        path="/wiki/:categoryId/:itemId"
+                        element={<WikiItemDetail />}
+                    />
                     <Route path="/usuario" element={<UserDetails />} />
                 </Route>
             </Routes>
