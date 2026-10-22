@@ -42,6 +42,7 @@ export default function UserDetails() {
             if (err instanceof ApiError && err.status === 401) {
                 logout();
                 navigate("/login");
+                return;
             }
             throw new Error(getAuthErrorMessage(err, "update"));
         }
@@ -56,8 +57,11 @@ export default function UserDetails() {
             navigate("/login", { replace: true });
         } catch (err) {
             if (err instanceof ApiError && err.status === 401) {
+                // Sessão já não valia mais — mesmo destino de quando a
+                // exclusão dá certo, só que sem apagar a conta de fato.
                 logout();
                 navigate("/login");
+                return;
             }
             throw new Error(getAuthErrorMessage(err, "update"));
         }

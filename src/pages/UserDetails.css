@@ -142,6 +142,110 @@
     background: #606060;
 }
 
+/* ===========================================================
+   Excluir Usuário
+=========================================================== */
+
+.UserDetails .danger-zone {
+    margin-top: 2.4rem;
+    padding-top: 1.8rem;
+
+    border-top: 2px solid #4a4a4a;
+}
+
+.UserDetails .delete-account-btn {
+    padding: 0.8rem 1.2rem;
+
+    color: #fff;
+    background: #8a2f2b;
+
+    border: 4px solid #3a3a3a;
+    border-radius: 8px;
+
+    font-family: "Press Start 2P", cursive;
+    font-size: 0.7rem;
+    text-shadow: 1px 1px 0 #000;
+
+    cursor: pointer;
+
+    transition: transform 0.1s ease;
+}
+
+.UserDetails .delete-account-btn:hover {
+    transform: scale(1.03);
+}
+
+.UserDetails .delete-account-btn:active {
+    transform: scale(0.97);
+}
+
+.UserDetails .danger-zone-step {
+    max-width: 420px;
+}
+
+.UserDetails .danger-zone-step label {
+    display: block;
+    margin-bottom: 0.5rem;
+
+    font-size: 0.65rem;
+    text-shadow: 2px 2px 0 #000;
+}
+
+.UserDetails .danger-zone-warning {
+    margin-bottom: 1rem;
+    padding: 0.9rem 1rem;
+
+    background: #606060;
+    border-left: 4px solid #d9534f;
+    border-radius: 6px;
+
+    font-size: 0.8rem;
+    line-height: 1.6;
+}
+
+.UserDetails .danger-zone-actions {
+    display: flex;
+    gap: 0.6rem;
+    margin-top: 1rem;
+}
+
+.UserDetails .danger-zone-actions button {
+    flex: 1;
+    padding: 0.7rem 1rem;
+
+    color: #fff;
+
+    border: 4px solid #3a3a3a;
+    border-radius: 8px;
+
+    font-family: "Press Start 2P", cursive;
+    font-size: 0.65rem;
+    text-shadow: 1px 1px 0 #000;
+    white-space: nowrap;
+
+    cursor: pointer;
+
+    transition: transform 0.1s ease;
+}
+
+.UserDetails .danger-zone-actions button:hover {
+    transform: scale(1.05);
+}
+
+.UserDetails .danger-zone-actions button:active {
+    transform: scale(0.95);
+}
+
+.UserDetails .danger-zone-actions button:disabled {
+    cursor: not-allowed;
+    opacity: 0.6;
+    transform: none;
+}
+
+.UserDetails .delete-confirm-btn {
+    background: #8a2f2b;
+}
+
 @media (max-width: 700px) {
     .UserDetails .detail-row {
         flex-direction: column;
