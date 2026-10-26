@@ -113,15 +113,18 @@ export interface ApiStageReward {
 export interface ApiStage {
     id: number;
     name: string;
-    paddleBot: ApiStagePaddleBot;
-    ultimateBot: ApiUltimate;
-    skinBot: ApiStageSkinBot;
-    particleBot: ApiParticle;
+    // Nulável: pelo menos a Fase 1 (tutorial) já veio sem algum desses
+    // preenchido — por isso são tratados como opcionais no adaptador
+    // (ver stages em WikiItemDetails.ts).
+    paddleBot: ApiStagePaddleBot | null;
+    ultimateBot: ApiUltimate | null;
+    skinBot: ApiStageSkinBot | null;
+    particleBot: ApiParticle | null;
     territory: string;
     difficulty: string;
     enemyType: string;
-    objective: ApiStageObjective;
-    reward: ApiStageReward;
+    objective: ApiStageObjective | null;
+    reward: ApiStageReward | null;
     // Até 3 modificadores; slots vazios vêm como null.
     modifiers: (ApiModifier | null)[];
 }

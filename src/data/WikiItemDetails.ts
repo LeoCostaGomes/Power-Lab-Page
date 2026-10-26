@@ -1,10 +1,9 @@
+import { toArray } from "../api/Client";
 import {
     boxesApi,
     modifiersApi,
     paddlesApi,
     paddleSkinsApi,
-    particlesApi,
-    skinsApi,
     stagesApi,
     ultimatesApi,
 } from "../api/Wiki";
@@ -58,6 +57,9 @@ function modifierCard(
     };
 }
 
+// Só as categorias listadas aqui têm página de detalhes — Skins e
+// Partículas foram tiradas de propósito (ver WikiItemCard, que usa esse
+// mesmo registro pra decidir se o card deve ou não virar um link).
 export const wikiDetailSources: Record<string, WikiDetailSource> = {
     paddles: {
         getDetail: async (id) => {
@@ -72,6 +74,11 @@ export const wikiDetailSources: Record<string, WikiDetailSource> = {
                 )
                 .map((combo) => combo.sprite);
 
+            // Mesma blindagem usada nas listas: se as 5 descrições não
+            // vierem com chaves sequenciais, o PHP devolve um objeto em
+            // vez de array e .map() quebraria.
+            const descriptions = toArray<string>(paddle.descriptions);
+
             return {
                 title: paddle.name,
                 images,
@@ -80,7 +87,7 @@ export const wikiDetailSources: Record<string, WikiDetailSource> = {
                 ],
                 // A raquete não tem uma descrição única — tem 5, uma por
                 // estágio de evolução.
-                description: paddle.descriptions
+                description: descriptions
                     .map((text, index) => `Estágio ${index + 1}: ${text}`)
                     .join("\n\n"),
                 relatedCards: [],
@@ -99,39 +106,6 @@ export const wikiDetailSources: Record<string, WikiDetailSource> = {
                     { label: "Território", value: ultimate.territory },
                 ],
                 description: ultimate.description,
-                relatedCards: [],
-            };
-        },
-    },
-
-    particles: {
-        getDetail: async (id) => {
-            const particle = await particlesApi.getById(id);
-
-            return {
-                title: particle.name,
-                image: particle.sprite,
-                infoFields: [],
-                relatedCards: [],
-            };
-        },
-    },
-
-    skins: {
-        getDetail: async (id) => {
-            const [skin, combos] = await Promise.all([
-                skinsApi.getById(id),
-                paddleSkinsApi.getAll(),
-            ]);
-
-            const images = combos
-                .filter((combo) => String(combo.skinId) === String(skin.id))
-                .map((combo) => combo.sprite);
-
-            return {
-                title: skin.name,
-                images,
-                infoFields: [],
                 relatedCards: [],
             };
         },
@@ -175,56 +149,80 @@ export const wikiDetailSources: Record<string, WikiDetailSource> = {
         getDetail: async (id) => {
             const stage = await stagesApi.getById(id);
 
-            const relatedCards: WikiDetailCard[] = [
-                {
+            // Cada sub-item pode vir null (ex.: a Fase 1/tutorial não tem
+            // todos preenchidos) — por isso cada um só entra na lista se
+            // realmente existir, em vez de acessar .name direto.
+            const relatedCards: WikiDetailCard[] = [];
+
+            if (stage.paddleBot) {
+                relatedCards.push({
                     label: "Raquete do Bot",
                     name: stage.paddleBot.name,
                     href: `/wiki/paddles/${stage.paddleBot.id}`,
-                },
-                {
+                });
+            }
+
+            if (stage.skinBot) {
+                relatedCards.push({
                     label: "Skin do Bot",
                     name: stage.skinBot.name,
                     image: stage.skinBot.sprite,
                     href: `/wiki/skins/${stage.skinBot.id}`,
-                },
-                {
+                });
+            }
+
+            if (stage.ultimateBot) {
+                relatedCards.push({
                     label: "Ultimate do Bot",
                     name: stage.ultimateBot.name,
                     image: stage.ultimateBot.sprite,
                     href: `/wiki/ultimates/${stage.ultimateBot.id}`,
-                },
-                {
+                });
+            }
+
+            if (stage.particleBot) {
+                relatedCards.push({
                     label: "Partícula do Bot",
                     name: stage.particleBot.name,
                     image: stage.particleBot.sprite,
-                    href: `/wiki/particles/${stage.particleBot.id}`,
-                },
-                {
+                });
+            }
+
+            if (stage.reward) {
+                relatedCards.push({
                     label: "Recompensa",
                     name: `${stage.reward.text} (x${stage.reward.quantity})`,
                     image: stage.reward.sprite,
-                },
+                });
+            }
+
+            relatedCards.push(
                 ...stage.modifiers
                     .map((modifier, index) => modifierCard(modifier, index))
                     .filter(
                         (card): card is WikiDetailCard => card !== null,
                     ),
+            );
+
+            const infoFields: WikiDetailField[] = [
+                { label: "Território", value: stage.territory },
+                { label: "Dificuldade", value: stage.difficulty },
+                { label: "Tipo de Inimigo", value: stage.enemyType },
             ];
+
+            if (stage.objective) {
+                infoFields.push({
+                    label: "Objetivo",
+                    value: `${stage.objective.name} (x${stage.objective.quantity})\n${stage.objective.description}`,
+                });
+            }
 
             return {
                 title: stage.name,
                 // A fase não tem sprite próprio — usa a do bot (raquete +
-                // skin aplicada), mesma escolha feita no card da Wiki.
-                image: stage.skinBot.sprite,
-                infoFields: [
-                    { label: "Território", value: stage.territory },
-                    { label: "Dificuldade", value: stage.difficulty },
-                    { label: "Tipo de Inimigo", value: stage.enemyType },
-                    {
-                        label: "Objetivo",
-                        value: `${stage.objective.name} (x${stage.objective.quantity})\n${stage.objective.description}`,
-                    },
-                ],
+                // skin aplicada), quando existir.
+                image: stage.skinBot?.sprite,
+                infoFields,
                 relatedCards,
             };
         },

@@ -136,18 +136,16 @@ export default function WikiItemDetail() {
                         <ItemImageAside detail={detail} />
 
                         <div className="item-main">
-                            <section className="ContentBox">
-                                <h2>Descrição</h2>
-                                <p>
-                                    {detail.description ? (
+                            {detail.description && (
+                                <section className="ContentBox">
+                                    <h2>Descrição</h2>
+                                    <p>
                                         <Multiline
                                             text={detail.description}
                                         />
-                                    ) : (
-                                        "Nenhuma descrição disponível para este item."
-                                    )}
-                                </p>
-                            </section>
+                                    </p>
+                                </section>
+                            )}
 
                             {detail.relatedCards.length > 0 && (
                                 <section className="ContentBox">
