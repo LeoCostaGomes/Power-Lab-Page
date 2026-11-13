@@ -33,11 +33,6 @@
     cursor: default;
 }
 
-.wiki-card-static:hover {
-    transform: none;
-    border-color: #3a3a3a;
-}
-
 .wiki-card-image {
     display: block;
     width: 100%;

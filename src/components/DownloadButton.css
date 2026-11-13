@@ -1,0 +1,129 @@
+.download-cta {
+    display: flex;
+    justify-content: center;
+    margin-top: 2rem;
+}
+
+/* Paleta do botão — verde da quadra do Power Pong (o mesmo #4c8a3f do
+   fundo do site), com a borda escura e a sombra preta que o site já usa
+   nos títulos e botões. Pra usar as cores exatas do jogo, é só trocar
+   os valores abaixo. */
+.download-cta-btn {
+    --dl-main: #4c8a3f;
+    --dl-hover: #5a9f4a;
+    --dl-light: #7cc468;
+    --dl-dark: #2f5c27;
+    --dl-border: #3a3a3a;
+    --dl-text: #ffffff;
+    --dl-text-shadow: #000000;
+    --dl-glow: rgba(124, 196, 104, 0.55);
+
+    display: inline-flex;
+    align-items: center;
+    gap: 1rem;
+
+    padding: 0.9rem 1.8rem;
+
+    color: var(--dl-text);
+    background: var(--dl-main);
+
+    border: 4px solid var(--dl-border);
+    border-radius: 10px;
+
+    /* relevo "duro" de pixel art: luz em cima, sombra embaixo e um
+       degrau escuro por fora, como um botão de fliperama */
+    box-shadow:
+        inset 0 4px 0 var(--dl-light),
+        inset 0 -6px 0 var(--dl-dark),
+        0 6px 0 var(--dl-border),
+        0 0 18px 2px var(--dl-glow);
+
+    animation: download-cta-bob 2.4s ease-in-out infinite;
+
+    transition:
+        transform 0.1s ease,
+        box-shadow 0.1s ease,
+        background 0.15s ease;
+}
+
+.download-cta-btn:hover {
+    background: var(--dl-hover);
+    animation: none;
+    transform: translateY(-3px) scale(1.04);
+}
+
+.download-cta-btn:active {
+    animation: none;
+    transform: translateY(4px);
+
+    box-shadow:
+        inset 0 4px 0 var(--dl-light),
+        inset 0 -6px 0 var(--dl-dark),
+        0 2px 0 var(--dl-border);
+}
+
+.download-cta-btn:focus-visible {
+    outline: 4px solid #fff;
+    outline-offset: 4px;
+}
+
+.download-cta-icon {
+    width: 22px;
+    height: 28px;
+    flex-shrink: 0;
+
+    fill: var(--dl-text);
+    filter: drop-shadow(2px 2px 0 var(--dl-text-shadow));
+    shape-rendering: crispEdges;
+}
+
+.download-cta-text {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    text-align: left;
+}
+
+.download-cta-label {
+    font-family: "Press Start 2P", cursive;
+    font-size: 1rem;
+    text-shadow: 2px 2px 0 var(--dl-text-shadow);
+    text-transform: uppercase;
+}
+
+.download-cta-store {
+    font-family: "Press Start 2P", cursive;
+    font-size: 0.5rem;
+    letter-spacing: 1px;
+    text-shadow: 1px 1px 0 var(--dl-text-shadow);
+    text-transform: uppercase;
+}
+
+/* Sobe e desce devagar pra chamar atenção sem poluir a tela. */
+@keyframes download-cta-bob {
+    0%,
+    100% {
+        transform: translateY(0);
+    }
+
+    50% {
+        transform: translateY(-5px);
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .download-cta-btn {
+        animation: none;
+    }
+}
+
+@media (max-width: 480px) {
+    .download-cta-btn {
+        padding: 0.8rem 1.2rem;
+        gap: 0.8rem;
+    }
+
+    .download-cta-label {
+        font-size: 0.85rem;
+    }
+}

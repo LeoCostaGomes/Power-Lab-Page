@@ -7,7 +7,7 @@ import {
     stagesApi,
     ultimatesApi,
 } from "../api/Wiki";
-import type { ApiModifier } from "../api/WikiTypes";
+import type { ApiBox, ApiModifier, ApiPaddleSkin } from "../api/WikiTypes";
 
 export interface WikiDetailField {
     label: string;
@@ -22,7 +22,7 @@ export interface WikiDetailCard {
     name: string;
     image?: string;
     // Link pra página de detalhes da categoria correspondente, quando
-    // existir (ex.: raquete do bot -> /wiki/paddles/{id}).
+    // existir (ver detailHref).
     href?: string;
 }
 
@@ -43,6 +43,19 @@ export interface WikiDetailSource {
     getDetail: (id: string) => Promise<WikiItemDetailViewModel>;
 }
 
+// Só devolve um link se a categoria realmente tiver página de detalhes
+// (ou seja, se estiver em wikiDetailSources). Skins e Partículas não têm,
+// então o card relacionado delas fica sem link em vez de levar pra uma
+// página de "item não encontrado".
+function detailHref(
+    categoryId: string,
+    id: number | string,
+): string | undefined {
+    return categoryId in wikiDetailSources
+        ? `/wiki/${categoryId}/${id}`
+        : undefined;
+}
+
 function modifierCard(
     modifier: ApiModifier | null,
     index: number,
@@ -53,12 +66,38 @@ function modifierCard(
         label: `Modificador ${index + 1}`,
         name: modifier.name,
         image: modifier.sprite,
-        href: `/wiki/modifiers/${modifier.id}`,
+        href: detailHref("modifiers", modifier.id),
     };
 }
 
+function normalizeText(text: string): string {
+    return text
+        .normalize("NFD")
+        .replace(/[\u0300-\u036f]/g, "")
+        .trim()
+        .toLowerCase();
+}
+
+// A recompensa da fase só traz texto/quantidade/sprite — não tem o id do
+// caixote. Então a ligação é feita pelo nome: primeiro igualdade exata e,
+// se não achar, o caixote cujo nome aparece dentro do texto da recompensa
+// (o de nome mais longo vence). Sem correspondência, não vira link.
+function findBoxForReward(
+    rewardText: string,
+    boxes: ApiBox[],
+): ApiBox | undefined {
+    const target = normalizeText(rewardText);
+
+    const exact = boxes.find((box) => normalizeText(box.name) === target);
+    if (exact) return exact;
+
+    return boxes
+        .filter((box) => target.includes(normalizeText(box.name)))
+        .sort((a, b) => b.name.length - a.name.length)[0];
+}
+
 // Só as categorias listadas aqui têm página de detalhes — Skins e
-// Partículas foram tiradas de propósito (ver WikiItemCard, que usa esse
+// Partículas ficaram de fora de propósito (ver WikiItemCard, que usa esse
 // mesmo registro pra decidir se o card deve ou não virar um link).
 export const wikiDetailSources: Record<string, WikiDetailSource> = {
     paddles: {
@@ -147,7 +186,30 @@ export const wikiDetailSources: Record<string, WikiDetailSource> = {
 
     stages: {
         getDetail: async (id) => {
-            const stage = await stagesApi.getById(id);
+            // A lista de caixotes só serve pra ligar a recompensa à página
+            // do caixote — se falhar, a fase carrega normalmente, só sem
+            // esse link.
+            const [stage, boxes] = await Promise.all([
+                stagesApi.getById(id),
+                boxesApi.getAll().catch(() => [] as ApiBox[]),
+            ]);
+
+            // A raquete não tem sprite próprio; a imagem dela vem da
+            // combinação raquete+skin. skinBot.sprite já é essa combinação
+            // (a skin aplicada na raquete do bot). Se a fase não tiver
+            // skin, usa a primeira combinação que existir pra raquete.
+            let paddleImage = stage.skinBot?.sprite;
+
+            if (!paddleImage && stage.paddleBot) {
+                const paddleId = String(stage.paddleBot.id);
+                const combos = await paddleSkinsApi
+                    .getAll()
+                    .catch(() => [] as ApiPaddleSkin[]);
+
+                paddleImage = combos.find(
+                    (combo) => String(combo.paddleId) === paddleId,
+                )?.sprite;
+            }
 
             // Cada sub-item pode vir null (ex.: a Fase 1/tutorial não tem
             // todos preenchidos) — por isso cada um só entra na lista se
@@ -158,7 +220,8 @@ export const wikiDetailSources: Record<string, WikiDetailSource> = {
                 relatedCards.push({
                     label: "Raquete do Bot",
                     name: stage.paddleBot.name,
-                    href: `/wiki/paddles/${stage.paddleBot.id}`,
+                    image: paddleImage,
+                    href: detailHref("paddles", stage.paddleBot.id),
                 });
             }
 
@@ -167,7 +230,7 @@ export const wikiDetailSources: Record<string, WikiDetailSource> = {
                     label: "Skin do Bot",
                     name: stage.skinBot.name,
                     image: stage.skinBot.sprite,
-                    href: `/wiki/skins/${stage.skinBot.id}`,
+                    href: detailHref("skins", stage.skinBot.id),
                 });
             }
 
@@ -176,7 +239,7 @@ export const wikiDetailSources: Record<string, WikiDetailSource> = {
                     label: "Ultimate do Bot",
                     name: stage.ultimateBot.name,
                     image: stage.ultimateBot.sprite,
-                    href: `/wiki/ultimates/${stage.ultimateBot.id}`,
+                    href: detailHref("ultimates", stage.ultimateBot.id),
                 });
             }
 
@@ -185,14 +248,20 @@ export const wikiDetailSources: Record<string, WikiDetailSource> = {
                     label: "Partícula do Bot",
                     name: stage.particleBot.name,
                     image: stage.particleBot.sprite,
+                    href: detailHref("particles", stage.particleBot.id),
                 });
             }
 
             if (stage.reward) {
+                const rewardBox = findBoxForReward(stage.reward.text, boxes);
+
                 relatedCards.push({
                     label: "Recompensa",
                     name: `${stage.reward.text} (x${stage.reward.quantity})`,
                     image: stage.reward.sprite,
+                    href: rewardBox
+                        ? detailHref("boxes", rewardBox.id)
+                        : undefined,
                 });
             }
 
@@ -219,9 +288,8 @@ export const wikiDetailSources: Record<string, WikiDetailSource> = {
 
             return {
                 title: stage.name,
-                // A fase não tem sprite próprio — usa a do bot (raquete +
-                // skin aplicada), quando existir.
-                image: stage.skinBot?.sprite,
+                // A fase não tem sprite próprio — usa a imagem do bot.
+                image: paddleImage,
                 infoFields,
                 relatedCards,
             };

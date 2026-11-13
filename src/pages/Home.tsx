@@ -1,4 +1,5 @@
 import NavBar from "../components/NavBar";
+import DownloadButton from "../components/DownloadButton";
 import "./home.css";
 
 export default function Home() {
@@ -47,15 +48,7 @@ export default function Home() {
                         arcade, pixel art e progressão constante.
                     </p>
 
-                    <div className="download-wrapper">
-                        <button
-                            type="button"
-                            className="download-btn"
-                            title="Em breve"
-                        >
-                            Download
-                        </button>
-                    </div>
+                    <DownloadButton />
                 </section>
 
                 <section className="ContentBox Gallery">
