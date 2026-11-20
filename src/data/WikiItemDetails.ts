@@ -1,13 +1,13 @@
-import { toArray } from "../api/Client";
-import {
-    boxesApi,
-    modifiersApi,
-    paddlesApi,
-    paddleSkinsApi,
-    stagesApi,
-    ultimatesApi,
-} from "../api/Wiki";
+import { ApiError, toArray } from "../api/Client";
 import type { ApiBox, ApiModifier, ApiPaddleSkin } from "../api/WikiTypes";
+import {
+    boxesCache,
+    modifiersCache,
+    paddlesCache,
+    paddleSkinsCache,
+    stagesCache,
+    ultimatesCache,
+} from "./WikiCache";
 
 export interface WikiDetailField {
     label: string;
@@ -82,10 +82,10 @@ function normalizeText(text: string): string {
 // caixote. Então a ligação é feita pelo nome: primeiro igualdade exata e,
 // se não achar, o caixote cujo nome aparece dentro do texto da recompensa
 // (o de nome mais longo vence). Sem correspondência, não vira link.
-function findBoxForReward(
+function findBoxForReward<T extends { id: number; name: string }>(
     rewardText: string,
-    boxes: ApiBox[],
-): ApiBox | undefined {
+    boxes: T[],
+): T | undefined {
     const target = normalizeText(rewardText);
 
     const exact = boxes.find((box) => normalizeText(box.name) === target);
@@ -103,9 +103,13 @@ export const wikiDetailSources: Record<string, WikiDetailSource> = {
     paddles: {
         getDetail: async (id) => {
             const [paddle, combos] = await Promise.all([
-                paddlesApi.getById(id),
-                paddleSkinsApi.getAll(),
+                paddlesCache.getById(id, (item) => item.id),
+                paddleSkinsCache.getAll(),
             ]);
+
+            if (!paddle) {
+                throw new ApiError(404, "Item não encontrado.");
+            }
 
             const images = combos
                 .filter(
@@ -136,7 +140,14 @@ export const wikiDetailSources: Record<string, WikiDetailSource> = {
 
     ultimates: {
         getDetail: async (id) => {
-            const ultimate = await ultimatesApi.getById(id);
+            const ultimate = await ultimatesCache.getById(
+                id,
+                (item) => item.id,
+            );
+
+            if (!ultimate) {
+                throw new ApiError(404, "Item não encontrado.");
+            }
 
             return {
                 title: ultimate.name,
@@ -152,7 +163,11 @@ export const wikiDetailSources: Record<string, WikiDetailSource> = {
 
     boxes: {
         getDetail: async (id) => {
-            const box = await boxesApi.getById(id);
+            const box = await boxesCache.getById(id, (item) => item.id);
+
+            if (!box) {
+                throw new ApiError(404, "Item não encontrado.");
+            }
 
             return {
                 title: box.name,
@@ -172,7 +187,14 @@ export const wikiDetailSources: Record<string, WikiDetailSource> = {
 
     modifiers: {
         getDetail: async (id) => {
-            const modifier = await modifiersApi.getById(id);
+            const modifier = await modifiersCache.getById(
+                id,
+                (item) => item.id,
+            );
+
+            if (!modifier) {
+                throw new ApiError(404, "Item não encontrado.");
+            }
 
             return {
                 title: modifier.name,
@@ -186,13 +208,14 @@ export const wikiDetailSources: Record<string, WikiDetailSource> = {
 
     stages: {
         getDetail: async (id) => {
-            // A lista de caixotes só serve pra ligar a recompensa à página
-            // do caixote — se falhar, a fase carrega normalmente, só sem
-            // esse link.
             const [stage, boxes] = await Promise.all([
-                stagesApi.getById(id),
-                boxesApi.getAll().catch(() => [] as ApiBox[]),
+                stagesCache.getById(id, (item) => item.id),
+                boxesCache.getAll().catch((): ApiBox[] => []),
             ]);
+
+            if (!stage) {
+                throw new ApiError(404, "Item não encontrado.");
+            }
 
             // A raquete não tem sprite próprio; a imagem dela vem da
             // combinação raquete+skin. skinBot.sprite já é essa combinação
@@ -202,9 +225,9 @@ export const wikiDetailSources: Record<string, WikiDetailSource> = {
 
             if (!paddleImage && stage.paddleBot) {
                 const paddleId = String(stage.paddleBot.id);
-                const combos = await paddleSkinsApi
+                const combos = await paddleSkinsCache
                     .getAll()
-                    .catch(() => [] as ApiPaddleSkin[]);
+                    .catch((): ApiPaddleSkin[] => []);
 
                 paddleImage = combos.find(
                     (combo) => String(combo.paddleId) === paddleId,
@@ -288,7 +311,8 @@ export const wikiDetailSources: Record<string, WikiDetailSource> = {
 
             return {
                 title: stage.name,
-                // A fase não tem sprite próprio — usa a imagem do bot.
+                // A fase não tem sprite próprio — usa a do bot (raquete +
+                // skin aplicada), quando existir.
                 image: paddleImage,
                 infoFields,
                 relatedCards,

@@ -1,17 +1,17 @@
 import type { WikiItem } from "../types/Wiki";
 import {
-    boxesApi,
-    gameModesApi,
-    gameVersionsApi,
-    modifiersApi,
-    objectivesApi,
-    paddlesApi,
-    paddleSkinsApi,
-    particlesApi,
-    skinsApi,
-    stagesApi,
-    ultimatesApi,
-} from "../api/Wiki";
+    boxesCache,
+    gameModesCache,
+    gameVersionsCache,
+    modifiersCache,
+    objectivesCache,
+    paddlesCache,
+    paddleSkinsCache,
+    particlesCache,
+    skinsCache,
+    stagesCache,
+    ultimatesCache,
+} from "./WikiCache";
 import {
     boxToWikiItem,
     gameModeToWikiItem,
@@ -29,36 +29,22 @@ export interface WikiSource {
     fetchItems: () => Promise<WikiItem[]>;
 }
 
-// As combinações raquete+skin são usadas tanto por "paddles" quanto por
-// "skins" — esse cache evita buscar a lista duas vezes se o usuário
-// visitar as duas categorias na mesma sessão.
-let paddleSkinCombosPromise: ReturnType<typeof paddleSkinsApi.getAll> | null =
-    null;
-
-function getPaddleSkinCombos() {
-    if (!paddleSkinCombosPromise) {
-        paddleSkinCombosPromise = paddleSkinsApi.getAll();
-    }
-    return paddleSkinCombosPromise;
-}
-
-// Um registro por id de categoria (ver WikiCategories.ts).
+// Um registro por id de categoria (ver WikiCategories.ts). Cada fonte usa
+// os caches de WikiCache.ts — a busca de verdade na API só acontece uma
+// vez por recurso, mesmo revisitando a categoria várias vezes ou abrindo
+// vários itens em sequência.
 export const wikiSources: Record<string, WikiSource> = {
     paddles: {
         fetchItems: async () => {
             const [paddles, combos] = await Promise.all([
-                paddlesApi.getAll(),
-                getPaddleSkinCombos(),
+                paddlesCache.getAll(),
+                paddleSkinsCache.getAll(),
             ]);
 
             return paddles.map((paddle) =>
                 paddleToWikiItem(
                     paddle,
                     combos
-                        // String() por segurança: paddles/get e
-                        // paddles-skins/get são controllers diferentes e
-                        // podem não devolver o id no mesmo tipo (número
-                        // vs texto).
                         .filter(
                             (combo) =>
                                 String(combo.paddleId) === String(paddle.id),
@@ -70,17 +56,17 @@ export const wikiSources: Record<string, WikiSource> = {
     },
     ultimates: {
         fetchItems: async () =>
-            (await ultimatesApi.getAll()).map(ultimateToWikiItem),
+            (await ultimatesCache.getAll()).map(ultimateToWikiItem),
     },
     particles: {
         fetchItems: async () =>
-            (await particlesApi.getAll()).map(particleToWikiItem),
+            (await particlesCache.getAll()).map(particleToWikiItem),
     },
     skins: {
         fetchItems: async () => {
             const [skins, combos] = await Promise.all([
-                skinsApi.getAll(),
-                getPaddleSkinCombos(),
+                skinsCache.getAll(),
+                paddleSkinsCache.getAll(),
             ]);
 
             return skins.map((skin) =>
@@ -97,26 +83,27 @@ export const wikiSources: Record<string, WikiSource> = {
         },
     },
     boxes: {
-        fetchItems: async () => (await boxesApi.getAll()).map(boxToWikiItem),
+        fetchItems: async () =>
+            (await boxesCache.getAll()).map(boxToWikiItem),
     },
     modifiers: {
         fetchItems: async () =>
-            (await modifiersApi.getAll()).map(modifierToWikiItem),
+            (await modifiersCache.getAll()).map(modifierToWikiItem),
     },
     gameModes: {
         fetchItems: async () =>
-            (await gameModesApi.getAll()).map(gameModeToWikiItem),
+            (await gameModesCache.getAll()).map(gameModeToWikiItem),
     },
     matchObjectives: {
         fetchItems: async () =>
-            (await objectivesApi.getAll()).map(objectiveToWikiItem),
+            (await objectivesCache.getAll()).map(objectiveToWikiItem),
     },
     gameVersions: {
         fetchItems: async () =>
-            (await gameVersionsApi.getAll()).map(gameVersionToWikiItem),
+            (await gameVersionsCache.getAll()).map(gameVersionToWikiItem),
     },
     stages: {
         fetchItems: async () =>
-            (await stagesApi.getAll()).map(stageToWikiItem),
+            (await stagesCache.getAll()).map(stageToWikiItem),
     },
 };

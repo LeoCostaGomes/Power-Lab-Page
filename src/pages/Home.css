@@ -137,9 +137,14 @@
 }
 
 .gallery-box {
+    display: block;
+    width: 100%;
     aspect-ratio: 16 / 10;
 
     background: #9a9a9a;
+    /* As 6 capturas de tela têm proporções diferentes entre si — cover
+       preenche o quadro sem esticar, cortando o excesso. */
+    object-fit: cover;
 
     border: 4px solid #3a3a3a;
     border-radius: 8px;

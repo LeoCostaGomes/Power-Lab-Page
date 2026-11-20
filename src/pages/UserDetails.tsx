@@ -10,6 +10,14 @@ import "./UserDetails.css";
 
 type UserPatch = Partial<{ name: string; email: string; password: string }>;
 
+// Checagem simples de formato (igual o que type="email" faria sozinho se
+// o "Salvar" fosse o submit de um <form> — aqui ele é só um botão comum).
+const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+function validateEmail(value: string): string | null {
+    return EMAIL_PATTERN.test(value) ? null : "Digite um e-mail válido.";
+}
+
 export default function UserDetails() {
     const { user, token, login, updateUser, logout } = useAuth();
     const navigate = useNavigate();
@@ -95,6 +103,7 @@ export default function UserDetails() {
                         saveButtonLabel="Salvar Novo E-mail"
                         requiresPassword
                         onVerifyPassword={verifyPassword}
+                        validate={validateEmail}
                         onSave={(newValue) => saveField({ email: newValue })}
                     />
 

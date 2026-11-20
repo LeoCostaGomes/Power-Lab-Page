@@ -14,6 +14,10 @@ interface EditableUserFieldProps {
     requiresPassword: boolean;
     onVerifyPassword?: (currentPassword: string) => Promise<void>;
     onSave: (newValue: string) => Promise<void>;
+    // Validação própria do campo (ex.: formato de e-mail). Como "Salvar"
+    // aqui é um botão comum, não um <form> enviado, o navegador nunca
+    // valida o type="email" sozinho — por isso essa checagem é manual.
+    validate?: (value: string) => string | null;
 }
 
 export default function EditableUserField({
@@ -26,6 +30,7 @@ export default function EditableUserField({
     requiresPassword,
     onVerifyPassword,
     onSave,
+    validate,
 }: EditableUserFieldProps) {
     const [mode, setMode] = useState<Mode>("idle");
     const [currentPassword, setCurrentPassword] = useState("");
@@ -69,12 +74,19 @@ export default function EditableUserField({
             return;
         }
 
-        if (!newValue.trim()) return;
+        const trimmedValue = newValue.trim();
+        if (!trimmedValue) return;
+
+        const validationError = validate?.(trimmedValue);
+        if (validationError) {
+            setError(validationError);
+            return;
+        }
 
         setError(null);
         setIsSubmitting(true);
         try {
-            await onSave(newValue.trim());
+            await onSave(trimmedValue);
             reset();
         } catch (err) {
             setError(

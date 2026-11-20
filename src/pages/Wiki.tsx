@@ -5,6 +5,10 @@ import WikiItemCard from "../components/WikiItemCard";
 import WikiInfoCard from "../components/WikiInfoCard";
 import { wikiCategories } from "../data/WikiCategories";
 import { wikiSources } from "../data/WikiSources";
+import {
+    getLastActiveCategoryId,
+    setLastActiveCategoryId,
+} from "../data/WikiUiState";
 import { ApiError } from "../api/Client";
 import type { WikiItem } from "../types/Wiki";
 import "./Wiki.css";
@@ -13,8 +17,13 @@ type CategoryStatus = "loading" | "success" | "error";
 
 export default function Wiki() {
     const [activeCategoryId, setActiveCategoryId] = useState(
-        wikiCategories[0].id,
+        () => getLastActiveCategoryId() ?? wikiCategories[0].id,
     );
+
+    function handleSelectCategory(categoryId: string) {
+        setActiveCategoryId(categoryId);
+        setLastActiveCategoryId(categoryId);
+    }
     const [itemsByCategory, setItemsByCategory] = useState<
         Record<string, WikiItem[]>
     >({});
@@ -95,7 +104,7 @@ export default function Wiki() {
                         <WikiCategoryNav
                             categories={wikiCategories}
                             activeCategoryId={activeCategoryId}
-                            onSelectCategory={setActiveCategoryId}
+                            onSelectCategory={handleSelectCategory}
                         />
 
                         <div className="wiki-content">
